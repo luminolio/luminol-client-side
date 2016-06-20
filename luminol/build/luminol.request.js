@@ -15,9 +15,6 @@ var Cue = (function () {
     Cue._cue = [];
     return Cue;
 }());
-//
-//
-//
 var HttpResponseObject = (function () {
     function HttpResponseObject(xhr, event) {
         this.xhr = xhr;
@@ -41,9 +38,6 @@ var HttpResponseObject = (function () {
     });
     return HttpResponseObject;
 }());
-//
-//
-//
 var Http = (function () {
     function Http(url) {
         this._url = null;
@@ -78,16 +72,11 @@ var Http = (function () {
         var transferCanceled = function () {
             _this._evts.cancel(new HttpResponseObject(_this._xhr, event));
         };
-        //this._xhr.overrideMimeType('text/plain; charset=x-user-defined');
         this._xhr.open(method.toUpperCase(), this._url, this._async);
         this._xhr.addEventListener("progress", updateProgress, false);
         this._xhr.addEventListener("load", transferComplete, false);
         this._xhr.addEventListener("error", transferFailed, false);
         this._xhr.addEventListener("abort", transferCanceled, false);
-        // @todo
-        // implement cors
-        // XDomainRequest for ie
-        // withCredentials for w3c browsers
         this._xhr.send();
         return this;
     };
@@ -191,26 +180,4 @@ var Http = (function () {
     return Http;
 }());
 exports.Http = Http;
-// import * as request from "assets/vanuatu/request";
-// var x = new request.Http("https://httpbin.org/image/jpeg")
-// var x = new request.Http("https://httpbin.org/image/png")
-// var x = new request.Http("https://httpbin.org/image/svg")
-// 	.responseAsBlob
-// var x = new request.Http("https://httpbin.org/html")
-// .on("data", (response) => {
-// 	console.log("DATA", response);
-// })
-// .on("error", (response) => {
-// 	console.log("ERROR", response);
-// })
-// .on("success", (response) => {
-// 	console.log("SUCCESS", response);
-// 	if (response.type == "blob") {
-// 		document.body.appendChild( response.img );
-// 	}
-// })
-// .on("cancel", (response) => {
-// 	console.log("CANCELED", response);
-// })
-// .exec("GET"); 
 //# sourceMappingURL=luminol.request.js.map
