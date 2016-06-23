@@ -1,8 +1,8 @@
 class Cue {
 	private static _cue = [];
 
-	static add(httpRequest: Http) {
-		this._cue.push(Http);
+	static add(httpRequest: Request.http) {
+		this._cue.push(Request.http);
 	}
 
 	static abort() {
@@ -24,14 +24,14 @@ class HttpResponseObject {
 	private type;
 	private response;
 
-	constructor (xhr, event) {
-		this.xhr   = xhr;
+	constructor(xhr, event) {
+		this.xhr = xhr;
 		this.event = event;
-		this.data  = this.xhr.response;
-		this.type  = this.xhr.responseType;
+		this.data = this.xhr.response;
+		this.type = this.xhr.responseType;
 	}
 
-	get img () {
+	get img() {
 		if (this.type == "blob" && this.data.type.indexOf("image/") == 0) {
 			var img = new Image();
 			img.src = URL.createObjectURL(this.data);
@@ -42,167 +42,184 @@ class HttpResponseObject {
 	}
 }
 
-//
-//
-//
+export module Request {
+	//
+	//
+	//
 
-export class Http {
-	private _url = null;
-	private _xhr;
-	private _async = true;
-	private _evts = {
-		"data"    : function(httpResp: HttpResponseObject) { },
-		"error"   : function(httpResp: HttpResponseObject) { },
-		"success" : function(httpResp: HttpResponseObject) { },
-		"cancel"  : function(httpResp: HttpResponseObject) { }
-	};
+	export class http {
+		private _url = null;
+		private _xhr;
+		private _async = true;
+		private _evts = {
+			"data": function(httpResp: HttpResponseObject) { },
+			"error": function(httpResp: HttpResponseObject) { },
+			"success": function(httpResp: HttpResponseObject) { },
+			"cancel": function(httpResp: HttpResponseObject) { }
+		};
 
-	constructor(url: string) {
-		this._xhr = this._XMLHttpRequest();
-		this._url = encodeURI(url);
-		Cue.add(this._xhr);
-	}
-
-	on(event, callback) {
-		if (callback instanceof Function) {
-			this._evts[event] = callback;
+		constructor(url: string) {
+			this._xhr = this._XMLHttpRequest();
+			this._url = encodeURI(url);
+			Cue.add(this._xhr);
 		}
-		return this;
-	}
 
-	exec(method) {
-		var updateProgress = (event) => {
-			this._evts.data(new HttpResponseObject(this._xhr, event));
-		}; 
+		on(event, callback) {
+			if (callback instanceof Function) {
+				this._evts[event] = callback;
+			}
+			return this;
+		}
 
-		var transferComplete = () => {
-			this._evts.success(new HttpResponseObject(this._xhr, event));
-		}; 
+		onSuccess(callback) {
+			return this.on("success", callback);
+		}
 
-		var transferFailed = () => {
-			this._evts.error(new HttpResponseObject(this._xhr, event));
-		};
+		onData(callback) {
+			return this.on("data", callback);
+		}
 
-		var transferCanceled = () => {
-			this._evts.cancel(new HttpResponseObject(this._xhr, event));
-		};
+		onError(callback) {
+			return this.on("error", callback);
+		}
 
-		//this._xhr.overrideMimeType('text/plain; charset=x-user-defined');
+		onCancel(callback) {
+			return this.on("cancel", callback);
+		}
 
-		this._xhr.open(method.toUpperCase(), this._url, this._async);
+		exec(method) {
+			var updateProgress = (event) => {
+				this._evts.data(new HttpResponseObject(this._xhr, event));
+			};
 
-		this._xhr.addEventListener("progress" , updateProgress   , false);
-		this._xhr.addEventListener("load"     , transferComplete , false);
-		this._xhr.addEventListener("error"    , transferFailed   , false);
-		this._xhr.addEventListener("abort"    , transferCanceled , false);
+			var transferComplete = () => {
+				this._evts.success(new HttpResponseObject(this._xhr, event));
+			};
 
-		// @todo
-		// implement cors
-		// XDomainRequest for ie
-		// withCredentials for w3c browsers
+			var transferFailed = () => {
+				this._evts.error(new HttpResponseObject(this._xhr, event));
+			};
 
-		this._xhr.send();
-		return this;
-	}
+			var transferCanceled = () => {
+				this._evts.cancel(new HttpResponseObject(this._xhr, event));
+			};
 
-	post() {
-		return this.exec("POST");
-	}
+			//this._xhr.overrideMimeType('text/plain; charset=x-user-defined');
 
-	get() {
-		return this.exec("GET");
-	}
+			this._xhr.open(method.toUpperCase(), this._url, this._async);
 
-	delete() {
-		return this.exec("DELETE");
-	}
+			this._xhr.addEventListener("progress", updateProgress, false);
+			this._xhr.addEventListener("load", transferComplete, false);
+			this._xhr.addEventListener("error", transferFailed, false);
+			this._xhr.addEventListener("abort", transferCanceled, false);
 
-	put() {
-		return this.exec("PUT");
-	}
+			// @todo
+			// implement cors
+			// XDomainRequest for ie
+			// withCredentials for w3c browsers
 
-	head() {
-		return this.exec("HEAD");
-	}
+			this._xhr.send();
+			return this;
+		}
 
-	abort() {
-		this._xhr.abort();
-		return this;
-	}
+		get post () {
+			return this.exec("POST");
+		}
 
-	setResponseType (responseType: string) {
-		var responseType = responseType.toLowerCase();
-		this._xhr.responseType = responseType;
-		return this;
-	}
+		get get() {
+			return this.exec("GET");
+		}
 
-	get responseAsBlob () {
-		this.setResponseType("blob");
-		return this;
-	}
+		get delete() {
+			return this.exec("DELETE");
+		}
 
-	get responseAsText () {
-		this.setResponseType("text");
-		return this;
-	}
+		get put() {
+			return this.exec("PUT");
+		}
 
-	get responseAsJson () {
-		this.setResponseType("json");
-		return this;
-	}
+		get head() {
+			return this.exec("HEAD");
+		}
 
-	get responseAsDocument () {
-		this.setResponseType("document");
-		return this;
-	}
+		get abort() {
+			this._xhr.abort();
+			return this;
+		}
 
-	get responseAsHtml () {
-		return this.responseAsDocument;
-	}
+		setResponseType(responseType: string) {
+			var responseType = responseType.toLowerCase();
+			this._xhr.responseType = responseType;
+			return this;
+		}
 
-	get responseAsXml () {
-		return this.responseAsDocument;
-	}
+		get responseAsBlob() {
+			this.setResponseType("blob");
+			return this;
+		}
 
-	private _XMLHttpRequest() {
-		try {
-			return new XMLHttpRequest();
-		} catch (e) { }
+		get responseAsText() {
+			this.setResponseType("text");
+			return this;
+		}
 
-		try {
-			return new ActiveXObject("Msxml3.XMLHTTP");
-		} catch (e) { }
+		get responseAsJson() {
+			this.setResponseType("json");
+			return this;
+		}
 
-		try {
-			return new ActiveXObject("Msxml2.XMLHTTP.6.0");
-		} catch (e) { }
+		get responseAsDocument() {
+			this.setResponseType("document");
+			return this;
+		}
 
-		try {
-			return new ActiveXObject("Msxml2.XMLHTTP.3.0");
-		} catch (e) { }
+		get responseAsHtml() {
+			return this.responseAsDocument;
+		}
 
-		try {
-			return new ActiveXObject("Msxml2.XMLHTTP");
-		} catch (e) { }
+		get responseAsXml() {
+			return this.responseAsDocument;
+		}
 
-		try {
-			return new ActiveXObject("Microsoft.XMLHTTP");
-		} catch (e) { }
+		private _XMLHttpRequest() {
+			try {
+				return new XMLHttpRequest();
+			} catch (e) { }
 
-		return null;
+			try {
+				return new ActiveXObject("Msxml3.XMLHTTP");
+			} catch (e) { }
+
+			try {
+				return new ActiveXObject("Msxml2.XMLHTTP.6.0");
+			} catch (e) { }
+
+			try {
+				return new ActiveXObject("Msxml2.XMLHTTP.3.0");
+			} catch (e) { }
+
+			try {
+				return new ActiveXObject("Msxml2.XMLHTTP");
+			} catch (e) { }
+
+			try {
+				return new ActiveXObject("Microsoft.XMLHTTP");
+			} catch (e) { }
+
+			return null;
+		}
 	}
 }
 
-
 // import * as request from "assets/vanuatu/request";
 
-// var x = new request.Http("https://httpbin.org/image/jpeg")
-// var x = new request.Http("https://httpbin.org/image/png")
-// var x = new request.Http("https://httpbin.org/image/svg")
+// var x = new request.http("https://httpbin.org/image/jpeg")
+// var x = new request.http("https://httpbin.org/image/png")
+// var x = new request.http("https://httpbin.org/image/svg")
 
 // 	.responseAsBlob
 
-// var x = new request.Http("https://httpbin.org/html")
+// var x = new request.http("https://httpbin.org/html")
 
 	// .on("data", (response) => {
 	// 	console.log("DATA", response);
