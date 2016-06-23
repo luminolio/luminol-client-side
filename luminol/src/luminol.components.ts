@@ -15,15 +15,15 @@ export class LuminolComponent {
 	private _load(moduleName: String) {
 		new Import({
 			dunha : `../${config.path.components}/${moduleName}/component.js`,
-			zika  : "zikaaaa",
-			$     : "jtoba",
-			dirce : "dirceee"
+			// zika: "zikaaaa",
+			// $: "jToba",
+			// dirce: "dirceee"
 		})
 		
 		.onLoad(
-			(context)=>{
-				console.log("---------")
-				console.log(context)
+			(nspace) => {
+				console.log("------------------------");
+				console.log(nspace);
 			}
 		);
 

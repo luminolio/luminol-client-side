@@ -1,3 +1,4 @@
-window['luminolModule'].exports = function() {
-	return "123123123123";
+declare var luminolModule;
+luminolModule = function() {
+	return "isso veio do component";
 };

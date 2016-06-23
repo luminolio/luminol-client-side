@@ -2,33 +2,33 @@ define(["require", "exports"], function (require, exports) {
     "use strict";
     var Import = (function () {
         function Import(urls) {
+            var _this = this;
+            this._namespace = {};
             this._evts = {
                 "load": function (context) { }
             };
             var countLoaded = 0;
             var countLoad = Object.keys(urls).length;
-            var context = {};
-            var callback = function () {
+            var parentThis = this;
+            var countToExecute = function () {
                 countLoaded++;
                 if (countLoaded == countLoad) {
-                    console.log(context);
+                    _this._evts.load(_this._namespace);
                 }
-                window['luminolModule'] = {};
             };
-            if (!window['luminolModule']) {
-                window['luminolModule'] = {};
-            }
             for (var key in urls) {
                 var url = urls[key];
                 var script = document.createElement("script");
                 script.src = url;
                 script.dataset['key'] = key;
                 script.onload = function () {
-                    context[this.dataset.name] = window['luminolModule'];
-                    callback();
+                    parentThis._namespace[this.dataset.key] = luminolModule;
+                    luminolModule = null;
+                    countToExecute();
                 };
                 script.onerror = function () {
-                    callback();
+                    console.error("Error loading luminolModule:", "'" + this.dataset.key + "',", "file not found:", this.src);
+                    countToExecute();
                 };
                 document.head.appendChild(script);
             }

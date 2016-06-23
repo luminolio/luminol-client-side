@@ -7,13 +7,10 @@ define(["require", "exports", "./luminol.import", "./_config"], function (requir
         LuminolComponent.prototype._load = function (moduleName) {
             new luminol_import_1.Import({
                 dunha: "../" + config.path.components + "/" + moduleName + "/component.js",
-                zika: "zikaaaa",
-                $: "jtoba",
-                dirce: "dirceee"
             })
-                .onLoad(function (context) {
-                console.log("---------");
-                console.log(context);
+                .onLoad(function (nspace) {
+                console.log("------------------------");
+                console.log(nspace);
             });
         };
         LuminolComponent.prototype._loadStyle = function () { };
