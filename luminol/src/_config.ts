@@ -1,5 +1,5 @@
 export = {
 	path : {
-		components : "luminol/components"
+		components : "luminol/components/build/"
 	}
 };

@@ -1,3 +1,3 @@
-import { LuminolComponent } from "./luminol.components";
+import { LuminolComponentLoader } from "./luminol.componentLoader";
 
-var x = new LuminolComponent("teste");
+var x = new LuminolComponentLoader("teste/component");

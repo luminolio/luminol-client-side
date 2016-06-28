@@ -1,1 +1,1 @@
-{"version":3,"file":"_config.js","sourceRoot":"","sources":["../src/_config.ts"],"names":[],"mappings":";;IAAA,OAAS;QACR,IAAI,EAAG;YACN,UAAU,EAAG,oBAAoB;SACjC;KACD,CAAC"}
+{"version":3,"file":"_config.js","sourceRoot":"","sources":["../src/_config.ts"],"names":[],"mappings":";;IAAA,OAAS;QACR,IAAI,EAAG;YACN,UAAU,EAAG,2BAA2B;SACxC;KACD,CAAC"}

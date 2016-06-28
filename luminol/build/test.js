@@ -1,5 +1,5 @@
-define(["require", "exports", "./luminol.components"], function (require, exports, luminol_components_1) {
+define(["require", "exports", "./luminol.componentLoader"], function (require, exports, luminol_componentLoader_1) {
     "use strict";
-    var x = new luminol_components_1.LuminolComponent("teste");
+    var x = new luminol_componentLoader_1.LuminolComponentLoader("teste/component");
 });
 //# sourceMappingURL=test.js.map

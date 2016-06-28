@@ -5,7 +5,7 @@ define(["require", "exports"], function (require, exports) {
             var _this = this;
             this._namespace = {};
             this._evts = {
-                "load": function (context) { }
+                "load": function (context, info) { }
             };
             var countLoaded = 0;
             var countLoad = Object.keys(urls).length;
@@ -13,7 +13,10 @@ define(["require", "exports"], function (require, exports) {
             var countToExecute = function () {
                 countLoaded++;
                 if (countLoaded == countLoad) {
-                    _this._evts.load(_this._namespace);
+                    var info = {
+                        paths: urls
+                    };
+                    _this._evts.load(_this._namespace, info);
                 }
             };
             for (var key in urls) {
@@ -22,8 +25,13 @@ define(["require", "exports"], function (require, exports) {
                 script.src = url;
                 script.dataset['key'] = key;
                 script.onload = function () {
-                    parentThis._namespace[this.dataset.key] = luminolModule;
-                    luminolModule = null;
+                    if (typeof luminolComponent == "undefined" || luminolComponent == null) {
+                        console.error("Error loading luminolComponent:", "'" + this.dataset.key + "',", "luminolComponent not found in:", this.src);
+                    }
+                    else {
+                        parentThis._namespace[this.dataset.key] = luminolComponent;
+                        luminolComponent = null;
+                    }
                     countToExecute();
                 };
                 script.onerror = function () {
